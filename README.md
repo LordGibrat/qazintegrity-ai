@@ -1,37 +1,49 @@
 # QazIntegrity AI
 
-An explainable AI prototype for prioritising public-procurement records for human audit in Kazakhstan.
+An explainable AI prototype for prioritising Kazakhstan public-procurement records for human review.
 
-## Run the API-powered MVP
+## What it does
+
+QazIntegrity turns procurement records into an auditable risk score using signals such as:
+
+- deviation from a benchmark price;
+- low competition;
+- repeat-winner concentration;
+- agency concentration;
+- contract amendments.
+
+The output is a prioritisation aid for auditors—not a finding of misconduct. Every demo record is synthetic and the score is designed to show why a record was prioritised.
+
+## Run the demo
 
 ```powershell
 python work/api_server.py
 ```
 
-Open `http://127.0.0.1:8765` in a browser. The dashboard now calls the API endpoints instead of embedding records.
+Open <http://127.0.0.1:8765>.
 
-For the complete token-request template, environment setup, and verification steps, see [API Enablement Guide](outputs/API_ENABLEMENT_GUIDE.md).
+Useful endpoints:
 
-### Connect the official Kazakhstan procurement API
+```text
+GET  /api/v1/health
+GET  /api/v1/stats
+GET  /api/v1/procurements?limit=20&q=road
+POST /api/v1/refresh
+```
 
-The official developer API is documented at `https://procurement.gov.kz/ru/developer/ows_v3` and requires a token. After requesting one from the procurement portal, set it only in the server environment:
+The demo works without credentials and uses the clearly labelled synthetic dataset.
+
+## Optional live-data mode
+
+The server can normalize records from the official Kazakhstan procurement API when a valid token is supplied through the environment:
 
 ```powershell
 $env:QAZINTEGRITY_API_TOKEN = "your-token"
 python work/api_server.py
 ```
 
-The connector calls the official contract registry and normalizes the response into QazIntegrity records. When no token is present—or the upstream service fails—the API uses the clearly-labelled synthetic demo dataset.
+Never commit the token or place it in frontend code. Setup details are in [`outputs/API_ENABLEMENT_GUIDE.md`](outputs/API_ENABLEMENT_GUIDE.md).
 
-Useful endpoints:
+## Limitations and next steps
 
-* `GET /api/v1/health`
-* `GET /api/v1/stats`
-* `GET /api/v1/procurements?limit=20&q=road`
-* `POST /api/v1/refresh`
-
-## Research contribution
-
-The prototype combines benchmark-price deviation, low competition, repeat-winner concentration, agency concentration, and tender amendments into an interpretable risk score. A production version should use official open data, validate labels with auditors, measure false-positive rates, support Kazakh/Russian text, and include privacy and appeal controls.
-
-The included records are synthetic demo data; they are not allegations about real organisations. Live contract records do not contain all fields needed for every risk rule, so the MVP only activates signals supported by the available fields. A production version should add tender-level bids, benchmark prices, official supplier names, audit labels, authentication, rate limiting, and a database cache.
+The MVP is not an automated investigation system. A production version would need auditor-validated labels, precision/recall and false-positive measurement, Kazakh/Russian text support, authentication, rate limiting, a database cache, and appeal and privacy controls. Live procurement records may not contain every field required by every signal, so unsupported signals are not fabricated.
