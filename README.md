@@ -1,6 +1,8 @@
 # QazIntegrity AI
 
-An explainable AI prototype for prioritising Kazakhstan public-procurement records for human review.
+**An explainable procurement-risk dashboard for human review.** It highlights records with unusual patterns and shows the signals behind each score.
+
+[Run the demo](#run-the-demo) · [Optional API mode](#optional-live-data-mode) · [Scope](#limitations-and-next-steps)
 
 ## What it does
 
